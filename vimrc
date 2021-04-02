@@ -28,32 +28,52 @@ call vundle#begin()
 "let g:tagbar_sort = 0         "设置标签不排序，默认排序
 
 
-Plugin 'skywind3000/gutentags_plus'
-Plugin 'ludovicchabant/vim-gutentags'
+"Plugin 'skywind3000/gutentags_plus'
+"Plugin 'ludovicchabant/vim-gutentags'
+"let g:gutentags_define_advanced_commands = 1
+"
+"let $GTAGSLABEL = 'native-pygments'
+"let $GTAGSCONF = '/usr/local/share/gtags/gtags.conf'
+"" gutentags 搜索工程目录的标志，当前文件路径向上递归直到碰到这些文件/目录名
+"let g:gutentags_project_root = ['.root', '.svn', '.git', '.hg', '.project']
+"
+"" 所生成的数据文件的名称
+"let g:gutentags_ctags_tagfile = '.tags'
+"
+"" 同时开启 ctags 和 gtags 支持：
+"let g:gutentags_modules = []
+"if executable('ctags')
+"	let g:gutentags_modules += ['ctags']
+"endif
+"if executable('gtags-cscope') && executable('gtags')
+"	let g:gutentags_modules += ['gtags_cscope']
+"endif
+"
+"" 将自动生成的 ctags/gtags 文件全部放入 ~/.cache/tags 目录中，避免污染工程目录
+"let g:gutentags_cache_dir = expand('~/.cache/tags')
+"
+"" 配置 ctags 的参数，老的 Exuberant-ctags 不能有 --extra=+q，注意
+"let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
+"let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
+"let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
+"
+"" 如果使用 universal ctags 需要增加下面一行，老的 Exuberant-ctags 不能加下一行
+""let g:gutentags_ctags_extra_args += ['--output-format=e-ctags']
+"
+"" 禁用 gutentags 自动加载 gtags 数据库的行为
+"let g:gutentags_auto_add_gtags_cscope = 0
+"
 
-let g:gutentags_project_root = ['.root', '.svn', '.git', '.project']
-let g:gutentags_ctags_tagfile = '.tags'
-let s:vim_tags = expand('~/.cache/tags')
-let g:gutentags_cache_dir = s:vim_tags
-if !isdirectory(s:vim_tags)
-   silent! call mkdir(s:vim_tags, 'p')
-endif
-let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
-let g:gutentags_ctags_extra_args += ['--c++-kinds=+pxI']
-let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
-
-" vim-airline
-let g:airline#extensions#tabline#formatter = 'default'
-Plugin 'scrooloose/nerdtree'
-" *********************************************
-" NERD插件属性
-" *********************************************
-"au vimenter * NERDTree  
-let NERDTreeWinSize=22
-map <F2> :NERDTreeToggle<CR>  
-
-"设置F2为开启NERDTree的快捷键
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+"Plugin 'scrooloose/nerdtree'
+"" *********************************************
+"" NERD插件属性
+"" *********************************************
+""au vimenter * NERDTree  
+"let NERDTreeWinSize=22
+"map <F2> :NERDTreeToggle<CR>  
+"
+""设置F2为开启NERDTree的快捷键
+"autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 " *********************************************
 " 分割布局相关
 " *********************************************
@@ -87,15 +107,16 @@ let g:ycm_complete_in_strings = 1   "在字符串输入中也能补全
 let g:ycm_collect_identifiers_from_tags_files=1                 " 开启 YCM 基于标签引擎
 let g:ycm_collect_identifiers_from_comments_and_strings = 1   "注释和字符串中的文字也会被收入补全
 let g:ycm_seed_identifiers_with_syntax=1   "语言关键字补全, 不过python关键字都很短，所以，需要的自己打开
-let g:ycm_collect_identifiers_from_tags_files = 1
 let g:ycm_min_num_of_chars_for_completion=2                     " 从第2个键入字符就开始罗列匹配项
-"" 引入，可以补全系统，以及python的第三方包 针对新老版本YCM做了兼容
+" 引入，可以补全系统，以及python的第三方包 针对新老版本YCM做了兼容
 let g:ycm_global_ycm_extra_conf = "~/.vim/bundle/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py"
 let g:ycm_autoclose_preview_window_after_completion=1
 let g:ycm_key_list_select_completion = ['<TAB>', '<Down>']
 let g:ycm_key_list_previous_completion = ['<S-TAB>', '<Up>']
 let g:ycm_auto_trigger = 0
-
+nnoremap <F7> :YcmCompleter GetParent<CR>
+nnoremap <C-T> :YcmCompleter GetType<CR>
+nnoremap <C-P> :YcmCompleter GoTo<CR>
 function YcmTriggerSwitcher()
     if g:ycm_auto_trigger == 0
         let g:ycm_auto_trigger = 1
@@ -105,8 +126,6 @@ function YcmTriggerSwitcher()
 endfunc
 
 nnoremap <C-K> :call YcmTriggerSwitcher()<CR>
-nnoremap <C-T> :YcmCompleter GetType<CR>
-nnoremap <C-P> :YcmCompleter GoTo<CR>
 " *********************************************
 " Tomorrow主题配置                
 " *********************************************
@@ -146,11 +165,10 @@ au BufNewFile,BufRead *.py
     \ set autoindent |
     \ set fileformat=unix |
 
-
 "autocmd BufNewFile *.hpp,*.h,*.cc,*.c,*.cpp exec ":call SetTitle()"
 "function SetTitle()
-"    call setline(1,strftime("// Copyright %Y Baidu Inc. All Rights Reserved."))
-"    call setline(2,"// Author : Hao Jiang (jianghao10@baidu.com)")
+"    call setline(1,strftime("// Copyright %Y YueWen Inc. All Rights Reserved."))
+"    call setline(2,"// Author : Hao Jiang (jianghao@yuewen.com)")
 "    call setline(3,strftime("// Data : %Y/%m/%d"))
 "    call setline(4,"//")
 "    call setline(5,"// Description: ")
@@ -159,8 +177,8 @@ au BufNewFile,BufRead *.py
 "
 "autocmd BufNewFile *.py exec ":call SetHeaderTitle()"
 "function SetHeaderTitle()
-"    call setline(1,strftime("# Copyright %Y Baidu Inc. All Rights Reserved."))
-"    call setline(2,"# Author : Hao Jiang (jianghao10@baidu.com)")
+"    call setline(1,strftime("# Copyright %Y YueWen Inc. All Rights Reserved."))
+"    call setline(2,"# Author : Hao Jiang (jianghao@yuewen.com)")
 "    call setline(3,strftime("# Data : %Y/%m/%d"))
 "    call setline(4,"#")
 "    call setline(5,"# Description: ")
@@ -185,3 +203,4 @@ set cursorline                  "突出显示当前行"
 set cursorcolumn                "突出显示当前列"
 set fileencodings=utf-8,gbk,ucs-bom,cp936,gb2312
 set tags+=~/.cache/tags/*.tags
+autocmd BufReadPost * normal! g`"
